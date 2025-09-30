@@ -37,11 +37,23 @@ class JobVacancyController extends Controller
      */
     public function create()
     {
-        $jobVacancy = JobVacancy::all();
         $types = ['Full-Time', 'Contract', 'Remote', 'Hybrid'];
-        $companies = Company::all();
         $jobCategories = JobCategory::all();
-        return view('job-vacancies.create', compact('jobVacancy', 'types', 'companies', 'jobCategories'));
+
+        $jobVacancy = new JobVacancy();
+
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            $companies = Company::orderBy('name')->get();
+            return view('job-vacancies.create', compact('jobVacancy', 'types', 'companies', 'jobCategories'));
+        }
+        if ($user->role === 'company-owner') {
+            $company = Company::where('ownerId', $user->id)->firstOrFail();
+            return view('job-vacancies.create', compact('jobVacancy', 'types', 'company', 'jobCategories'));
+        }
+
+        abort(403);
     }
 
     /**
@@ -50,8 +62,16 @@ class JobVacancyController extends Controller
     public function store(JobVacancyCreateRequest $request)
     {
         $validated = $request->validated();
+
+        $user = auth()->user();
+        if ($user->role === 'company-owner') {
+            $company = Company::where('ownerId', $user->id)->firstOrFail();
+            $validated['companyId'] = $company->id;
+        }
         JobVacancy::create($validated);
-        return redirect()->route('job-vacancies.index')->with('success', 'Job vacancy created successfully');
+        return redirect()
+            ->route('job-vacancies.index')
+            ->with('success', 'Job vacancy created successfully');
     }
 
     /**
@@ -72,7 +92,30 @@ class JobVacancyController extends Controller
         $types = ['Full-Time', 'Contract', 'Remote', 'Hybrid'];
         $companies = Company::all();
         $jobCategories = JobCategory::all();
-        return view('job-vacancies.edit', compact('jobVacancy', 'types', 'companies', 'jobCategories'));
+
+
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            $jobVacancy = JobVacancy::findOrFail($id);
+            $companies = Company::orderBy('name')->get();
+
+            return view('job-vacancies.edit', compact('jobVacancy', 'types', 'companies', 'jobCategories'));
+        }
+
+        if ($user->role === 'company-owner') {
+            $company = Company::where('ownerId', $user->id)->firstOrFail();
+            $jobVacancy = JobVacancy::where('companyId', $company->id)->findOrFail($id);
+
+            // ملاحظة: ما منرسل قائمة شركات للمالك
+            return view('job-vacancies.edit', [
+                'jobVacancy'   => $jobVacancy,
+                'types'        => $types,
+                'company'      => $company,
+                'jobCategories' => $jobCategories,
+            ]);
+        }
+        abort(403);
     }
 
     /**
@@ -83,6 +126,26 @@ class JobVacancyController extends Controller
         $validated = $request->validated();
         $jobVacancy = JobVacancy::findOrFail($id);
         $jobVacancy->update($validated);
+
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            // الأدمن يقدر يغيّر companyId (حسب قواعد الفاليديشن)
+            $jobVacancy = JobVacancy::findOrFail($id);
+        } elseif ($user->role === 'company-owner') {
+            // المالك: لا يسمح بتغيير الشركة + تحرّي الملكية
+            $company = Company::where('ownerId', $user->id)->firstOrFail();
+            $jobVacancy = JobVacancy::where('companyId', $company->id)->findOrFail($id);
+
+            // تجاهل أي companyId قادم من الفورم وثبّت شركة المالك
+            unset($validated['companyId']);
+            $validated['companyId'] = $company->id;
+        } else {
+            abort(403);
+        }
+
+        $jobVacancy->update($validated);
+
 
         if ($request->query('redirectToList') == 'false') {
             return redirect()->route('job-vacancies.show', $id)->with('success', 'Job vacancy updated successfully');

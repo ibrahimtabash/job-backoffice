@@ -8,10 +8,10 @@
         "framework"
     ],
     "license": "MIT",
-    "repositories": [
+      "repositories": [
         {
-            "type": "path",
-            "url": "../job-shared"
+            "type": "vcs",
+            "url": "https://github.com/ibrahimtabash/job-shared.git"
         }
     ],
     "require": {

@@ -9,6 +9,16 @@ class JobVacancyUpdateRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -34,7 +44,7 @@ class JobVacancyUpdateRequest extends FormRequest
             'location.string' => 'The job location must be a string.',
             'salary.required' => 'The job salary is required.',
             'salary.numeric' => 'The job salary must be a number.',
-            'salary.min' => 'The job salary must be must be at least 0.',
+            'salary.min' => 'The job salary must be at least 0.',
             'type.required' => 'The job type is required.',
             'type.max' => 'The job type must be less than 255 characters.',
             'type.string' => 'The job type must be a string.',

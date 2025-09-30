@@ -1,3 +1,7 @@
+@php
+    $role = auth()->user()->role ?? null;
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -62,20 +66,30 @@
                     </div>
 
                     {{-- Company Select Dropdown --}}
-                    <div class="mb-4">
-                        <label for="companyId" class="block text-sm font-medium text-gray-700">Company</label>
-                        <select name="companyId" id="companyId"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            @foreach ($companies as $company)
-                                <option value="{{ $company->id }}"
-                                    {{ old('companyId') == $company->id ? 'selected' : '' }}>
-                                    {{ $company->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('companyId')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    @if ($role === 'admin')
+
+                        <div class="mb-4">
+                            <label for="companyId" class="block text-sm font-medium text-gray-700">Company</label>
+                            <select name="companyId" id="companyId"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                @foreach ($companies as $company)
+                                    <option value="{{ $company->id }}"
+                                        {{ old('companyId') == $company->id ? 'selected' : '' }}>
+                                        {{ $company->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('companyId')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @elseif ($role === 'company-owner')
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Company</label>
+                            <input type="text" class="block w-full rounded-md bg-gray-100 border-gray-200 sm:text-sm"
+                                value="{{ $company->name }}" disabled>
+                            <p class="mt-1 text-xs text-gray-500">سيتم ربط الوظيفة بهذه الشركة تلقائيًا.</p>
+                        </div>
+                    @endif
 
                     {{-- Job Category Select Dropdown --}}
                     <div class="mb-4">
@@ -99,8 +113,7 @@
                     <div class="mb-4">
                         <label for="description" class="block text-sm font-medium text-gray-700">job Description</label>
                         <textarea name="description" id="description" rows="4"
-                            class="@error('salary') outline-red-500 outline outline-1 @enderror mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            {{ old('description') }}
+                            class="@error('description') outline-red-500 outline outline-1 @enderror mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ old('description') }}
                         </textarea>
                         @error('description')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -116,7 +129,7 @@
                         </a>
                         <button type="submit"
                             class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2">
-                            Add Company
+                            Add Job Vacancy
                         </button>
                     </div>
 

@@ -21,7 +21,7 @@
                     <p class="text-sm mb-4">Enter the job vacancy details</p>
 
                     <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                        <label for="title" class="block text-sm font-medium text-gray-700">Applicant Name</label>
                         <span>{{ $jobApplication->user->name }}</span>
                     </div>
 
@@ -31,18 +31,18 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                        <label for="title" class="block text-sm font-medium text-gray-700">Company</label>
                         <span>{{ $jobApplication->jobVacancy->company->name }}</span>
                     </div>
 
 
                     <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                        <label for="title" class="block text-sm font-medium text-gray-700">Score</label>
                         <span>{{ $jobApplication->aiGeneratedScore }}</span>
                     </div>
 
                     <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                        <label for="title" class="block text-sm font-medium text-gray-700">AI Feedback</label>
                         <span>{{ $jobApplication->aiGeneratedFeedback }}</span>
                     </div>
 

@@ -13,6 +13,7 @@ class JobVacancyCreateRequest extends FormRequest
 
     public function rules(): array
     {
+        $user = auth()->user();
         return [
             'title' => 'required|string|max:255|unique:job_vacancies,title',
             'location' => 'required|string|max:255',
@@ -20,7 +21,10 @@ class JobVacancyCreateRequest extends FormRequest
             'type' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'jobCategoryId' => 'required|string|max:255',
-            'companyId' => 'required|string|max:255',
+
+            'companyId' => $user->role === 'admin'
+                ? 'required|string|max:255'
+                : 'prohibited',
         ];
     }
 

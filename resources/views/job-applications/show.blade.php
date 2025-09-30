@@ -23,7 +23,7 @@
                 <h3 class="text-lg font-bold">Application Details</h3>
                 <p><strong>Applicant:</strong> {{ $jobApplication->user->name }}</p>
                 <p><strong>Job Vacancy:</strong> {{ $jobApplication->jobVacancy->title }}</p>
-                <p><strong>Company:</strong> {{ $jobApplication->company?->name ?? '' }}</p>
+                <p><strong>Company:</strong> {{ $jobApplication->jobVacancy->company?->name ?? '' }}</p>
                 <p><strong>Status:</strong>
                     <span
                         class="@if ($jobApplication->status == 'accepted') text-green-500 @elseif ($jobApplication->status == 'rejected') text-red-500  @else text-purple-500 @endif">

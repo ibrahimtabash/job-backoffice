@@ -1,3 +1,7 @@
+@php
+    $role = auth()->user()->role ?? null;
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -70,7 +74,7 @@
                     </div>
 
                     {{-- Company Select Dropdown --}}
-                    <div class="mb-4">
+                    {{-- <div class="mb-4">
                         <label for="companyId" class="block text-sm font-medium text-gray-700">Company</label>
                         <select name="companyId" id="companyId"
                             class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
@@ -84,7 +88,33 @@
                         @error('companyId')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
+                    {{-- Company (Admin only) --}}
+                    @if ($role === 'admin')
+                        <div class="mb-4">
+                            <label for="companyId" class="block text-sm font-medium text-gray-700">Company</label>
+                            <select name="companyId" id="companyId"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                @foreach ($companies as $company)
+                                    <option value="{{ $company->id }}"
+                                        {{ (int) old('companyId', $jobVacancy->companyId) === (int) $company->id ? 'selected' : '' }}>
+                                        {{ $company->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('companyId')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @elseif ($role === 'company-owner')
+                        {{-- لا نرسل companyId أبداً (prohibited في الفاليديشن) --}}
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">Company</label>
+                            <input type="text" class="block w-full rounded-md bg-gray-100 border-gray-200 sm:text-sm"
+                                value="{{ $company->name ?? '' }}" disabled>
+                            <p class="mt-1 text-xs text-gray-500">لا يمكن تغيير الشركة من حساب المالك.</p>
+                        </div>
+                    @endif
 
                     {{-- Job Category Select Dropdown --}}
                     <div class="mb-4">
