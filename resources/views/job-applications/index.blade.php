@@ -51,7 +51,7 @@
                                 <span>{{ $jobApplication->user->name }}</span>
                             @else
                                 <a class="text-blue-500 hover:text-blue-900 underline hover:no-underline"
-                                    href="{{ route('job-applications.show', $jobApplication->id) }}">{{ $jobApplication->user->name }}</a>
+                                    href="{{ route('job-applications.show', $jobApplication->id) }}">{{ $jobApplication->user?->name ?? '-' }}</a>
                             @endif
 
                         </td>
