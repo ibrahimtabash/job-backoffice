@@ -96,7 +96,7 @@
                     <div class="mb-4">
                         <label for="owner_name">Owner Email</label>
                         <input disabled type="email" name="owner_email" id="owner_email"
-                            value="{{ old('owner_email', $company->email) }}"
+                            value="{{ old('owner_email', $company->owner->email) }}"
                             class="@error('owner_email') outline-red-500 outline outline-1  @enderror mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-100">
                         @error('owner_email')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
